@@ -1,0 +1,5 @@
+services:
+  backend:
+    build: ./BE_PE/
+    ports:
+      - "8080:8080"
