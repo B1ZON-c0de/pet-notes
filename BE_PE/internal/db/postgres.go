@@ -10,21 +10,25 @@ import (
 type configDB struct {
 	username string
 	password string
+	host     string
+	port     string
 	dbName   string
 	sslMode  string
 }
 
-func NewConfigDB(username, pasword, dbName, sslMode string) *configDB {
+func NewConfigDB(username, pasword, dbName, sslMode, host, port string) *configDB {
 	return &configDB{
 		username: username,
 		password: pasword,
+		host:     host,
+		port:     port,
 		dbName:   dbName,
 		sslMode:  sslMode,
 	}
 }
 
 func (c *configDB) ConnectDB() (*sql.DB, error) {
-	connStr := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=%s", c.username, c.password, c.dbName, c.sslMode)
+	connStr := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=%s host=%s port=%s", c.username, c.password, c.dbName, c.sslMode, c.host, c.port)
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		return nil, err
@@ -40,8 +44,6 @@ func (c *configDB) ConnectDB() (*sql.DB, error) {
 
 func Migrate(db *sql.DB) error {
 	queries := []string{
-		`
-		`,
 		`CREATE TABLE IF NOT EXISTS users (
 			id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 			name VARCHAR(255) NOT NULL,
