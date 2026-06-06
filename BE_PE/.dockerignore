@@ -1,0 +1,63 @@
+# Git
+.git/
+.gitignore
+
+# Go
+*.exe
+*.exe~
+*.test
+*.out
+vendor/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Docker
+Dockerfile
+.dockerignore
+
+# Test
+*_test.go
+coverage.out
+coverage.html
+
+# Build
+/dist
+/build
+/bin
+/tmp
+/temp
+
+# Documentation
+*.md
+!README.md  # но оставить README если нужен
+docs/
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+
+# Migration files (если нужны в образе - удалить)
+# migrations/
+
+# Scripts (если не нужны)
+scripts/
+*.sh
+
+# Освобождаем место
+*.tar.gz
+*.zip
+*.db
