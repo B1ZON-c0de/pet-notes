@@ -12,6 +12,6 @@ type Note struct {
 }
 
 type NoteUpdateRequest struct {
-	Title string `json:"title,omitempty"`
-	Text  string `json:"text, omitempty"`
+	Title *string `json:"title,omitempty"`
+	Text  *string `json:"text,omitempty"`
 }

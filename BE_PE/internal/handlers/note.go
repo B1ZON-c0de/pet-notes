@@ -112,8 +112,13 @@ func (nh *NoteHandler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	note.Title = req.Title
-	note.Text = req.Text
+	if req.Title != nil {
+		note.Title = *req.Title
+	}
+
+	if req.Text != nil {
+		note.Text = *req.Text
+	}
 
 	if err := nh.service.Update(r.Context(), note); err != nil {
 		api.RespondWithError(w, api.CodeNoteNotFound, http.StatusBadRequest, err.Error())
