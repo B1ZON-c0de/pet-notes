@@ -108,7 +108,7 @@ func (as *authService) Login(ctx context.Context, email, password string) (strin
 }
 
 func (as *authService) ValidateToken(ctx context.Context, tokenString string) (string, error) {
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (any, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("неизвестный метод подписи: %v", token.Header["alg"])
 		}
