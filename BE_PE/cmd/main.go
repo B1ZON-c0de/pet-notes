@@ -7,12 +7,13 @@ import (
 	"os"
 
 	"github.com/B1ZON-c0de/backend/internal/db"
+	"github.com/B1ZON-c0de/backend/internal/logger"
 )
 
 func main() {
 	db, err := initDB()
 	if err != nil {
-		fmt.Printf("Ошибка инициализации бд: %v", err)
+		logger.Error.Fatalf("Ошибка инициализации бд: %v", err)
 	}
 	defer db.Close()
 
@@ -20,9 +21,9 @@ func main() {
 		fmt.Fprint(w, "Hello World")
 	})
 
-	fmt.Println("Сервер запущен на http://localhost:8080")
+	logger.Info.Println("Сервер запущен на http://localhost:8080")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
-		fmt.Println(err)
+		logger.Error.Fatalf("Ошибка сервера: %v", err)
 	}
 }
 
