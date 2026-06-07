@@ -25,7 +25,7 @@ func Auth(service service.AuthService) func(http.Handler) http.Handler {
 				return
 			}
 
-			parts := strings.Split(authHeader, " ")
+			parts := strings.Fields(authHeader)
 			if len(parts) != 2 || parts[0] != "Bearer" {
 				api.RespondWithError(w, api.CodeInvalidToken, http.StatusUnauthorized, ErrInvalidAuthFormat.Error())
 				return
