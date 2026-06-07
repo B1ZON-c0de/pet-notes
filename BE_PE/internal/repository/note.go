@@ -17,7 +17,7 @@ type NoteRepo interface {
 	GetAllByUserID(ctx context.Context, userId string) ([]models.Note, error)
 	GetOneByUserID(ctx context.Context, userId, noteId string) (*models.Note, error)
 	Update(ctx context.Context, note *models.Note) error
-	Delete(ctx context.Context, noteId string) error
+	Delete(ctx context.Context, userId, noteId string) error
 }
 
 type noteRepo struct {
@@ -82,9 +82,9 @@ func (nr *noteRepo) GetOneByUserID(ctx context.Context, userId, noteId string) (
 }
 
 func (nr *noteRepo) Update(ctx context.Context, note *models.Note) error {
-	query := "UPDATE notes SET title=$1, text=$2 WHERE id=$3 RETURNING updated_at"
+	query := "UPDATE notes SET title=$1, text=$2 WHERE id=$3 AND user_id=$4 RETURNING updated_at"
 
-	if err := nr.db.QueryRowContext(ctx, query, note.Title, note.Text, note.ID).Scan(&note.UpdatedAt); err != nil {
+	if err := nr.db.QueryRowContext(ctx, query, note.Title, note.Text, note.ID, note.UserID).Scan(&note.UpdatedAt); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return ErrNoteNotFound
 		}
@@ -94,10 +94,10 @@ func (nr *noteRepo) Update(ctx context.Context, note *models.Note) error {
 	return nil
 }
 
-func (nr *noteRepo) Delete(ctx context.Context, noteId string) error {
-	query := "DELETE FROM notes WHERE id=$1"
+func (nr *noteRepo) Delete(ctx context.Context, userId, noteId string) error {
+	query := "DELETE FROM notes WHERE id=$1 AND user_id=$2"
 
-	res, err := nr.db.ExecContext(ctx, query, noteId)
+	res, err := nr.db.ExecContext(ctx, query, noteId, userId)
 	if err != nil {
 		return err
 	}

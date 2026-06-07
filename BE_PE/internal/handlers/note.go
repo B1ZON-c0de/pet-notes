@@ -129,13 +129,18 @@ func (nh *NoteHandler) Update(w http.ResponseWriter, r *http.Request) {
 }
 
 func (nh *NoteHandler) Delete(w http.ResponseWriter, r *http.Request) {
+	userID, ok := r.Context().Value(userIdKey).(string)
+	if !ok {
+		api.RespondWithError(w, api.CodeUnauthorized, http.StatusUnauthorized, ErrNotFoundId.Error())
+		return
+	}
 	noteID := chi.URLParam(r, chiRouteId)
 	if noteID == "" {
 		api.RespondWithError(w, api.CodeBadRequest, http.StatusBadRequest, ErrIdRequired.Error())
 		return
 	}
 
-	if err := nh.service.Delete(r.Context(), noteID); err != nil {
+	if err := nh.service.Delete(r.Context(), userID, noteID); err != nil {
 		api.RespondWithError(w, api.CodeNoteNotFound, http.StatusBadRequest, err.Error())
 		return
 	}
