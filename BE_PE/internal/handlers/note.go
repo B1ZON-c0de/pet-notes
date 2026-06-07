@@ -17,7 +17,7 @@ var (
 )
 
 const (
-	userIdKey  = "user_id"
+	userIdKey  = models.UserIdKey
 	chiRouteId = "id"
 )
 
