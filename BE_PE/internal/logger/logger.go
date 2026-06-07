@@ -12,7 +12,7 @@ const (
 )
 
 var (
-	Info  = log.New(os.Stdout, Blue+"[INFO]"+Reset, log.LstdFlags)
-	Error = log.New(os.Stdout, Red+"[ERROR]"+Reset, log.LstdFlags|log.Lshortfile)
-	Debug = log.New(os.Stdout, "[DEBUG]", 0)
+	Info  = log.New(os.Stdout, Blue+"[INFO] "+Reset, log.LstdFlags)
+	Error = log.New(os.Stdout, Red+"[ERROR] "+Reset, log.LstdFlags|log.Lshortfile)
+	Debug = log.New(os.Stdout, "[DEBUG] ", 0)
 )
