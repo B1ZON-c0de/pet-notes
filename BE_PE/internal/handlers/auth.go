@@ -35,7 +35,9 @@ func (ah *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	api.RespondWithJSON(w, http.StatusCreated, map[string]string{"token": token})
+	setTokenInCookie(w, token)
+
+	api.RespondWithJSON(w, http.StatusCreated, nil)
 }
 
 func (ah *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
@@ -53,5 +55,33 @@ func (ah *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	api.RespondWithJSON(w, http.StatusOK, map[string]string{"token": token})
+	setTokenInCookie(w, token)
+
+	api.RespondWithJSON(w, http.StatusOK, nil)
+}
+
+func (ah *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
+
+	http.SetCookie(w, &http.Cookie{
+		Name:     "access_token",
+		Value:    "",
+		Path:     "/",
+		HttpOnly: true,
+		MaxAge:   -1,
+	})
+
+	api.RespondWithJSON(w, http.StatusOK, nil)
+}
+
+func setTokenInCookie(w http.ResponseWriter, token string) {
+	http.SetCookie(w, &http.Cookie{
+		Name:     "access_token",
+		Value:    token,
+		Path:     "/",
+		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode,
+		// TODO поменять потом
+		Secure: false,
+		MaxAge: 60 * 60 * 24,
+	})
 }

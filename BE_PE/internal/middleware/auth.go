@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"net/http"
-	"strings"
 
 	"github.com/B1ZON-c0de/backend/internal/api"
 	"github.com/B1ZON-c0de/backend/internal/models"
@@ -19,19 +18,13 @@ var (
 func Auth(service service.AuthService) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			authHeader := r.Header.Get("Authorization")
-			if authHeader == "" {
-				api.RespondWithError(w, api.CodeUnauthorized, http.StatusUnauthorized, ErrMissingHeaderAuth.Error())
+			cookie, err := r.Cookie("access_token")
+			if err != nil {
+				api.RespondWithError(w, api.CodeUnauthorized, http.StatusUnauthorized, err.Error())
 				return
 			}
 
-			parts := strings.Fields(authHeader)
-			if len(parts) != 2 || parts[0] != "Bearer" {
-				api.RespondWithError(w, api.CodeInvalidToken, http.StatusUnauthorized, ErrInvalidAuthFormat.Error())
-				return
-			}
-
-			userID, err := service.ValidateToken(r.Context(), parts[1])
+			userID, err := service.ValidateToken(r.Context(), cookie.Value)
 			if err != nil {
 				api.RespondWithError(w, api.CodeInvalidToken, http.StatusUnauthorized, err.Error())
 				return
