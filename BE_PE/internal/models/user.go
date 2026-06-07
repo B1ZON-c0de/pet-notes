@@ -2,6 +2,10 @@ package models
 
 import "time"
 
+type contextKey string
+
+const UserIdKey contextKey = "user_id"
+
 type User struct {
 	ID        string    `json:"id"`
 	Name      string    `json:"name"`
