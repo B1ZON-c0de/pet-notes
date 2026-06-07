@@ -3,8 +3,13 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"errors"
 
 	"github.com/B1ZON-c0de/backend/internal/models"
+)
+
+var (
+	ErrNoteNotFound = errors.New("такой записи не существует")
 )
 
 type NoteRepo interface {
@@ -62,10 +67,30 @@ func (nr *noteRepo) GetAllByUserID(ctx context.Context, userId string) ([]models
 }
 
 func (nr *noteRepo) GetOneByUserID(ctx context.Context, userId, noteId string) (*models.Note, error) {
-	return nil, nil
+	query := "SELECT id,title, text, user_id, created_at, updated_at FROM notes WHERE user_id=$1 AND id=$2"
+
+	var note models.Note
+
+	if err := nr.db.QueryRowContext(ctx, query, userId, noteId).Scan(&note.ID, &note.Title, &note.Text, &note.UserID, &note.CreatedAt, &note.UpdatedAt); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, ErrNoteNotFound
+		}
+		return nil, err
+	}
+
+	return &note, nil
 }
 
 func (nr *noteRepo) Update(ctx context.Context, note *models.Note) error {
+	query := "UPDATE notes SET title=$1, text=$2 WHERE id=$3 RETURNING updated_at"
+
+	if err := nr.db.QueryRowContext(ctx, query, note.ID).Scan(&note.UpdatedAt); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return ErrNoteNotFound
+		}
+		return err
+	}
+
 	return nil
 }
 
