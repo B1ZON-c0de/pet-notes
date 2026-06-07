@@ -13,7 +13,7 @@ const (
 	CodeInvalidToken        = "INVALID_TOKEN"
 	CodeBadRequest          = "BAD_REQUEST"
 	CodeInternalServerError = "INTERNAL_SERVER_ERROR"
-	CodeUnauthorized        = "UNATUTHORIZED"
+	CodeUnauthorized        = "UNAUTHORIZED"
 )
 
 type Response struct {

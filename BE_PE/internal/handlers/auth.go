@@ -60,6 +60,19 @@ func (ah *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	api.RespondWithJSON(w, http.StatusOK, nil)
 }
 
+func (ah *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
+
+	http.SetCookie(w, &http.Cookie{
+		Name:     "access_token",
+		Value:    "",
+		Path:     "/",
+		HttpOnly: true,
+		MaxAge:   -1,
+	})
+
+	api.RespondWithJSON(w, http.StatusOK, nil)
+}
+
 func setTokenInCookie(w http.ResponseWriter, token string) {
 	http.SetCookie(w, &http.Cookie{
 		Name:     "access_token",

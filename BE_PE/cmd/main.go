@@ -77,6 +77,8 @@ func main() {
 
 			r.Use(middleware.Auth(authService))
 
+			r.Post("/logout", authHandler.Logout)
+
 			r.Post("/notes", noteHandler.Create)
 			r.Get("/notes", noteHandler.GetAllByUser)
 			r.Get("/notes/{id}", noteHandler.GetOneByUser)
