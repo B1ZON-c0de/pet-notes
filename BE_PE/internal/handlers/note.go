@@ -54,7 +54,19 @@ func (nh *NoteHandler) GetAllByUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	notes, err := nh.service.GetNotesByUserID(r.Context(), userID)
+	search := r.URL.Query().Get("search")
+
+	var (
+		notes []models.Note
+		err   error
+	)
+
+	if search == "" {
+		notes, err = nh.service.GetNotesByUserID(r.Context(), userID)
+	} else {
+		notes, err = nh.service.Search(r.Context(), userID, search)
+	}
+
 	if err != nil {
 		api.RespondWithError(w, api.CodeUserNotFound, http.StatusNotFound, err.Error())
 		return
@@ -121,7 +133,7 @@ func (nh *NoteHandler) Update(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := nh.service.Update(r.Context(), note); err != nil {
-		api.RespondWithError(w, api.CodeNoteNotFound, http.StatusBadRequest, err.Error())
+		api.RespondWithError(w, api.CodeNoteNotFound, http.StatusNotFound, err.Error())
 		return
 	}
 
@@ -129,14 +141,19 @@ func (nh *NoteHandler) Update(w http.ResponseWriter, r *http.Request) {
 }
 
 func (nh *NoteHandler) Delete(w http.ResponseWriter, r *http.Request) {
+	userID, ok := r.Context().Value(userIdKey).(string)
+	if !ok {
+		api.RespondWithError(w, api.CodeUnauthorized, http.StatusUnauthorized, ErrNotFoundId.Error())
+		return
+	}
 	noteID := chi.URLParam(r, chiRouteId)
 	if noteID == "" {
 		api.RespondWithError(w, api.CodeBadRequest, http.StatusBadRequest, ErrIdRequired.Error())
 		return
 	}
 
-	if err := nh.service.Delete(r.Context(), noteID); err != nil {
-		api.RespondWithError(w, api.CodeNoteNotFound, http.StatusBadRequest, err.Error())
+	if err := nh.service.Delete(r.Context(), userID, noteID); err != nil {
+		api.RespondWithError(w, api.CodeNoteNotFound, http.StatusNotFound, err.Error())
 		return
 	}
 
