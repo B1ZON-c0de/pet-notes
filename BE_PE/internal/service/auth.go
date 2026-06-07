@@ -16,11 +16,13 @@ const (
 )
 
 var (
-	ErrEmailExists = errors.New("пользователь с такми email уже существует")
-	ErrEmailEmpty  = errors.New("поле email не может быть пустое")
-	ErrNameEmpty   = errors.New("поле name не может быть пустое")
-	ErrPassEmpty   = errors.New("поле password не может быть пустое")
-	ErrLenPassword = errors.New("поле password  должно содеожать более 6 символов")
+	ErrEmailExists   = errors.New("пользователь с такми email уже существует")
+	ErrEmailNotFound = errors.New("пользователя с таким email не существует")
+	ErrPassword      = errors.New("неверный пароль")
+	ErrEmailEmpty    = errors.New("поле email не может быть пустое")
+	ErrNameEmpty     = errors.New("поле name не может быть пустое")
+	ErrPassEmpty     = errors.New("поле password не может быть пустое")
+	ErrLenPassword   = errors.New("поле password  должно содеожать более 6 символов")
 )
 
 type AuthService interface {
@@ -45,17 +47,8 @@ func NewAuthService(repo repository.UserRepo, jwtSecret string, jwtExpire time.D
 
 func (as *authService) Register(ctx context.Context, name, email, password string) (string, error) {
 	// Валидация кредов
-	if email == "" {
-		return "", ErrEmailEmpty
-	}
-	if name == "" {
-		return "", ErrNameEmpty
-	}
-	if password == "" {
-		return "", ErrPassEmpty
-	}
-	if len(password) < lenPassword {
-		return "", ErrLenPassword
+	if err := as.validateCred(&name, email, password); err != nil {
+		return "", err
 	}
 
 	// Хэширование пароля
@@ -87,11 +80,50 @@ func (as *authService) Register(ctx context.Context, name, email, password strin
 }
 
 func (as *authService) Login(ctx context.Context, email, password string) (string, error) {
-	return "", nil
+	//Валидация кредов
+	if err := as.validateCred(nil, email, password); err != nil {
+		return "", err
+	}
+
+	user, err := as.repo.GetByEmail(ctx, email)
+	if err != nil {
+		if errors.Is(err, repository.ErrUserNotFound) {
+			return "", ErrEmailNotFound
+		}
+		return "", err
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+	if err != nil {
+		return "", ErrPassword
+	}
+	token, err := as.generateToken(user.ID)
+	if err != nil {
+		return "", err
+	}
+
+	return token, nil
 }
 
 func (as *authService) ValidateToken(ctx context.Context, token string) (string, error) {
 	return "", nil
+}
+
+func (as *authService) validateCred(name *string, email, password string) error {
+	if email == "" {
+		return ErrEmailEmpty
+	}
+	if name != nil && *name == "" {
+		return ErrNameEmpty
+	}
+	if password == "" {
+		return ErrPassEmpty
+	}
+	if len(password) < lenPassword {
+		return ErrLenPassword
+	}
+
+	return nil
 }
 
 func (as *authService) generateToken(userId string) (string, error) {
