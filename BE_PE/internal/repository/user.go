@@ -10,7 +10,12 @@ import (
 )
 
 var (
-	ErrUserExists = errors.New("пользователь с таким email уже существует")
+	ErrUserExists   = errors.New("пользователь с таким email уже существует")
+	ErrUserNotFound = errors.New("такого пользователя не существует")
+)
+
+const (
+	UniqueViolationErr = "23505"
 )
 
 type UserRepo interface {
@@ -31,7 +36,8 @@ func (ur *userRepo) Create(ctx context.Context, user *models.User) error {
 	query := "INSERT INTO users (name,email,password) VALUES ($1,$2,$3) RETURNING id,created_at"
 
 	if err := ur.db.QueryRowContext(ctx, query, user.Name, user.Email, user.Password).Scan(&user.ID, &user.CreatedAt); err != nil {
-		if pqErr, ok := err.(*pq.Error); ok && pqErr.Code == "23505" {
+		// 23505 код ошибки postgres если уникальное знчение уже существует
+		if pqErr, ok := err.(*pq.Error); ok && pqErr.Code == UniqueViolationErr {
 			return ErrUserExists
 		}
 		return err
@@ -41,9 +47,33 @@ func (ur *userRepo) Create(ctx context.Context, user *models.User) error {
 }
 
 func (ur *userRepo) GetByID(ctx context.Context, id string) (*models.User, error) {
-	return nil, nil
+	query := "SELECT id, name, email, created_at FROM users WHERE id=$1"
+	var user models.User
+
+	err := ur.db.QueryRowContext(ctx, query, id).Scan(&user.ID, &user.Name, &user.Email, &user.CreatedAt)
+
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, ErrUserNotFound
+		}
+		return nil, err
+	}
+
+	return &user, nil
 }
 
 func (ur *userRepo) GetByEmail(ctx context.Context, email string) (*models.User, error) {
-	return nil, nil
+	query := "SELECT id, name, email, password, created_at FROM users WHERE email=$1"
+	var user models.User
+
+	err := ur.db.QueryRowContext(ctx, query, email).Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.CreatedAt)
+
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, ErrUserNotFound
+		}
+		return nil, err
+	}
+
+	return &user, nil
 }
