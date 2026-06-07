@@ -29,9 +29,9 @@ func NewNoteRepo(db *sql.DB) NoteRepo {
 }
 
 func (nr *noteRepo) Create(ctx context.Context, note *models.Note) error {
-	query := "INSERT INTO notes ( title, text, user_id) VALUES ($1,$2,$3) RETURNING id, created_at, updated_at"
+	query := "INSERT INTO notes ( text, user_id) VALUES ($1,$2,$3) RETURNING id, created_at, updated_at"
 
-	if err := nr.db.QueryRowContext(ctx, query, note.Title, note.Text, note.UserID).Scan(&note.ID, &note.CreatedAt, &note.UpdatedAt); err != nil {
+	if err := nr.db.QueryRowContext(ctx, query, note.Text, note.UserID).Scan(&note.ID, &note.CreatedAt, &note.UpdatedAt); err != nil {
 		return err
 	}
 
