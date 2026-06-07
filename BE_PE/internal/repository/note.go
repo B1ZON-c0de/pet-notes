@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"database/sql"
 
 	"github.com/B1ZON-c0de/backend/internal/models"
 )
@@ -12,4 +13,62 @@ type NoteRepo interface {
 	GetOneByUserID(ctx context.Context, userId, noteId string) (*models.Note, error)
 	Update(ctx context.Context, note *models.Note) error
 	Delete(ctx context.Context, noteId string) error
+}
+
+type noteRepo struct {
+	db *sql.DB
+}
+
+func NewNoteRepo(db *sql.DB) NoteRepo {
+	return &noteRepo{db: db}
+}
+
+func (nr *noteRepo) Create(ctx context.Context, note *models.Note) error {
+	query := "INSERT INTO notes ( title, text, user_id) VALUES ($1,$2,$3) RETURNING id, created_at, updated_at"
+
+	if err := nr.db.QueryRowContext(ctx, query, note.Title, note.Text, note.UserID).Scan(&note.ID, &note.CreatedAt, &note.UpdatedAt); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (nr *noteRepo) GetAllByUserID(ctx context.Context, userId string) ([]models.Note, error) {
+	query := "SELECT id, title, text, user_id, created_at, updated_at FROM notes WHERE user_id=$1"
+
+	rows, err := nr.db.QueryContext(ctx, query, userId)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var notes []models.Note
+
+	for rows.Next() {
+		var note models.Note
+
+		if err := rows.Scan(&note.ID, &note.Title, &note.Text, &note.UserID, &note.CreatedAt, &note.UpdatedAt); err != nil {
+			return nil, err
+		}
+
+		notes = append(notes, note)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return notes, nil
+}
+
+func (nr *noteRepo) GetOneByUserID(ctx context.Context, userId, noteId string) (*models.Note, error) {
+	return nil, nil
+}
+
+func (nr *noteRepo) Update(ctx context.Context, note *models.Note) error {
+	return nil
+}
+
+func (nr *noteRepo) Delete(ctx context.Context, noteId string) error {
+	return nil
 }
