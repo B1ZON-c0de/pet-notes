@@ -121,7 +121,7 @@ func (nh *NoteHandler) Update(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := nh.service.Update(r.Context(), note); err != nil {
-		api.RespondWithError(w, api.CodeNoteNotFound, http.StatusBadRequest, err.Error())
+		api.RespondWithError(w, api.CodeNoteNotFound, http.StatusNotFound, err.Error())
 		return
 	}
 
@@ -141,7 +141,7 @@ func (nh *NoteHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := nh.service.Delete(r.Context(), userID, noteID); err != nil {
-		api.RespondWithError(w, api.CodeNoteNotFound, http.StatusBadRequest, err.Error())
+		api.RespondWithError(w, api.CodeNoteNotFound, http.StatusNotFound, err.Error())
 		return
 	}
 
