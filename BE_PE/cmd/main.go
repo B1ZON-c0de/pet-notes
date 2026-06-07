@@ -80,7 +80,7 @@ func main() {
 			r.Post("/notes", noteHandler.Create)
 			r.Get("/notes", noteHandler.GetAllByUser)
 			r.Get("/notes/{id}", noteHandler.GetOneByUser)
-			r.Put("/notes/{id}", noteHandler.Update)
+			r.Patch("/notes/{id}", noteHandler.Update)
 			r.Delete("/notes/{id}", noteHandler.Delete)
 
 			r.Get("/user", userHandler.GetUser)
