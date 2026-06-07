@@ -54,7 +54,19 @@ func (nh *NoteHandler) GetAllByUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	notes, err := nh.service.GetNotesByUserID(r.Context(), userID)
+	search := r.URL.Query().Get("search")
+
+	var (
+		notes []models.Note
+		err   error
+	)
+
+	if search == "" {
+		notes, err = nh.service.GetNotesByUserID(r.Context(), userID)
+	} else {
+		notes, err = nh.service.Search(r.Context(), userID, search)
+	}
+
 	if err != nil {
 		api.RespondWithError(w, api.CodeUserNotFound, http.StatusNotFound, err.Error())
 		return

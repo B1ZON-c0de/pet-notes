@@ -18,6 +18,7 @@ type NoteRepo interface {
 	GetOneByUserID(ctx context.Context, userId, noteId string) (*models.Note, error)
 	Update(ctx context.Context, note *models.Note) error
 	Delete(ctx context.Context, userId, noteId string) error
+	SearchByUserID(ctx context.Context, userID, search string) ([]models.Note, error)
 }
 
 type noteRepo struct {
@@ -112,4 +113,32 @@ func (nr *noteRepo) Delete(ctx context.Context, userId, noteId string) error {
 	}
 
 	return nil
+}
+
+func (nr *noteRepo) SearchByUserID(ctx context.Context, userID, search string) ([]models.Note, error) {
+	query := `SELECT id, title, text, user_id, created_at,updated_at FROM notes WHERE user_id=$1 AND ( title ILIKE '%' || $2 || '%' OR text ILIKE '%' || $2 || '%') ORDER BY updated_at DESC`
+
+	rows, err := nr.db.QueryContext(ctx, query, userID, search)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var notes []models.Note
+
+	for rows.Next() {
+		var note models.Note
+
+		if err := rows.Scan(&note.ID, &note.Title, &note.Text, &note.UserID, &note.CreatedAt, &note.UpdatedAt); err != nil {
+			return nil, err
+		}
+
+		notes = append(notes, note)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return notes, nil
 }

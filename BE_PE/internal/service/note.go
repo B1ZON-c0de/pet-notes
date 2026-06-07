@@ -19,6 +19,7 @@ type NoteService interface {
 	GetNoteByUserID(ctx context.Context, noteID, userID string) (*models.Note, error)
 	Update(ctx context.Context, note *models.Note) error
 	Delete(ctx context.Context, userID, noteID string) error
+	Search(ctx context.Context, userID, search string) ([]models.Note, error)
 }
 
 type noteService struct {
@@ -105,4 +106,18 @@ func (ns *noteService) Delete(ctx context.Context, userID, noteID string) error 
 	}
 
 	return nil
+}
+
+func (ns *noteService) Search(ctx context.Context, userID, search string) ([]models.Note, error) {
+	if userID == "" {
+		return nil, ErrNotFindUserID
+	}
+
+	notes, err := ns.repo.SearchByUserID(ctx, userID, search)
+	if err != nil {
+		return nil, err
+	}
+
+	return notes, nil
+
 }
