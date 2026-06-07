@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/B1ZON-c0de/backend/internal/api"
+	"github.com/B1ZON-c0de/backend/internal/models"
 	"github.com/B1ZON-c0de/backend/internal/service"
 )
 
@@ -18,7 +19,7 @@ func NewUserHandler(service service.UserService) *UserHandler {
 }
 
 func (uh *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
-	userID, ok := r.Context().Value("user_id").(string)
+	userID, ok := r.Context().Value(models.UserIdKey).(string)
 	if !ok {
 		api.RespondWithError(w, api.CodeUnauthorized, http.StatusUnauthorized, "id пользователя не найдено в контексте")
 	}
