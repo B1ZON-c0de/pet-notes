@@ -1,3 +1,4 @@
+import { Loader } from "@mantine/core";
 import { createBrowserRouter, Navigate } from "react-router";
 
 export const routes = createBrowserRouter([
@@ -11,6 +12,7 @@ export const routes = createBrowserRouter([
     children: [
       {
         path: "login",
+        HydrateFallback: Loader,
         lazy: async () => {
           const { default: Component } = await import("./pages/auth/Login.tsx");
           return { Component };
@@ -18,6 +20,7 @@ export const routes = createBrowserRouter([
       },
       {
         path: "register",
+        HydrateFallback: Loader,
         lazy: async () => {
           const { default: Component } =
             await import("./pages/auth/Register.tsx");
@@ -28,6 +31,7 @@ export const routes = createBrowserRouter([
   },
   {
     path: "notes",
+    HydrateFallback: Loader,
     lazy: async () => {
       const { default: Component } = await import("./pages/app/Notes.tsx");
       return { Component };
@@ -35,6 +39,7 @@ export const routes = createBrowserRouter([
     children: [
       {
         path: ":id",
+        HydrateFallback: Loader,
         lazy: async () => {
           const { default: Component } =
             await import("./pages/app/NotePage.tsx");
