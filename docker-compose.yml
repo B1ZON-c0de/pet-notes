@@ -1,4 +1,10 @@
 services:
+  frontend:
+    build: ./FE_PE/
+    ports:
+      - "3030:80"
+    depends_on:
+      - backend
   backend:
     build: ./BE_PE/
     ports:
