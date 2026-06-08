@@ -1,6 +1,6 @@
 import { Outlet } from "react-router";
 
-export const Notes = () => {
+const Notes = () => {
   return (
     <div>
       Приложение:
@@ -8,3 +8,5 @@ export const Notes = () => {
     </div>
   );
 };
+
+export default Notes;

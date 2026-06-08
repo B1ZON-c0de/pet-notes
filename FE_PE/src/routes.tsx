@@ -1,8 +1,4 @@
 import { createBrowserRouter, Navigate } from "react-router";
-import { Notes } from "./pages/app/Notes";
-import { Login } from "./pages/auth/Login";
-import { Register } from "./pages/auth/Register";
-import { NotePage } from "./pages/app/NotePage";
 
 export const routes = createBrowserRouter([
   {
@@ -13,13 +9,38 @@ export const routes = createBrowserRouter([
   {
     path: "auth",
     children: [
-      { path: "login", Component: Login },
-      { path: "register", Component: Register },
+      {
+        path: "login",
+        lazy: async () => {
+          const { default: Component } = await import("./pages/auth/Login.tsx");
+          return { Component };
+        },
+      },
+      {
+        path: "register",
+        lazy: async () => {
+          const { default: Component } =
+            await import("./pages/auth/Register.tsx");
+          return { Component };
+        },
+      },
     ],
   },
   {
     path: "notes",
-    Component: Notes,
-    children: [{ path: ":id", Component: NotePage }],
+    lazy: async () => {
+      const { default: Component } = await import("./pages/app/Notes.tsx");
+      return { Component };
+    },
+    children: [
+      {
+        path: ":id",
+        lazy: async () => {
+          const { default: Component } =
+            await import("./pages/app/NotePage.tsx");
+          return { Component };
+        },
+      },
+    ],
   },
 ]);
