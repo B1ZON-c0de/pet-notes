@@ -49,3 +49,10 @@ export const routes = createBrowserRouter([
     ],
   },
 ]);
+
+export const ROUTES = {
+  login: "/auth/login",
+  register: "/auth/register",
+  notes: "/notes",
+  note: (id: string) => `/notes/${id}`,
+};
