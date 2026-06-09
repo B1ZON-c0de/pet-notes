@@ -13,11 +13,8 @@ async function getUser() {
     if (res.data.success) {
       return res.data.data;
     }
-  } catch (err) {
-    if (axios.isAxiosError(err)) {
-      console.error(err.response?.data);
-      return null;
-    }
+  } catch {
+    return null;
   }
 }
 
