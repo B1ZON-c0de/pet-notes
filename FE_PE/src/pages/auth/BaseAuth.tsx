@@ -11,6 +11,9 @@ import {
 import { useForm, type FormValidateInput } from "@mantine/form";
 import { Link } from "react-router";
 import { ROUTES } from "../../routes";
+import { useState } from "react";
+import axios from "axios";
+import { notifications } from "@mantine/notifications";
 
 interface BaseField {
   label: string;
@@ -35,7 +38,7 @@ interface Props {
   pageLabel: string;
   submitLabel: string;
   descNav: DescNav;
-  submitFn: (values: FormValues) => void;
+  submitFn: (values: FormValues) => Promise<void>;
   fields: {
     name?: BaseField;
     email: BaseField;
@@ -58,6 +61,7 @@ export const BaseAuth = ({
   fields,
   submitFn,
 }: Props) => {
+  const [isLoading, setIsLoading] = useState(false);
   const initialFieldsVal: FormValues = Object.entries(fields).reduce(
     (acc, [key, field]) => {
       if (!field) return acc;
@@ -92,7 +96,27 @@ export const BaseAuth = ({
     <>
       <Stack h="100vh" align="center" justify="center" gap="md">
         <Title order={1}>{pageLabel}</Title>
-        <form onSubmit={form.onSubmit((values) => submitFn(values))}>
+        <form
+          onSubmit={form.onSubmit(async (values) => {
+            notifications.clean();
+            setIsLoading(true);
+            try {
+              await submitFn(values);
+              form.reset();
+            } catch (err) {
+              if (axios.isAxiosError(err)) {
+                notifications.show({
+                  title: "Ошибка",
+                  message: err.response?.data.error.message,
+                  color: "red",
+                  className: "notif-error",
+                });
+              }
+            } finally {
+              setIsLoading(false);
+            }
+          })}
+        >
           <Fieldset variant="filled" w={350}>
             <Stack gap="md">
               {Object.entries(fields).map(([key, { label, placeholder }]) =>
@@ -102,6 +126,7 @@ export const BaseAuth = ({
                     size="md"
                     key={form.key(key)}
                     {...form.getInputProps(key)}
+                    disabled={isLoading}
                   />
                 ) : (
                   <TextInput
@@ -110,13 +135,20 @@ export const BaseAuth = ({
                     placeholder={placeholder}
                     key={form.key(key)}
                     {...form.getInputProps(key)}
+                    disabled={isLoading}
                   />
                 ),
               )}
             </Stack>
           </Fieldset>
           <Space h="md" />
-          <Button variant="filled" fullWidth size="md" type="submit">
+          <Button
+            disabled={isLoading}
+            variant="filled"
+            fullWidth
+            size="md"
+            type="submit"
+          >
             {submitLabel}
           </Button>
         </form>

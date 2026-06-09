@@ -39,6 +39,7 @@ const Login = () => {
       if (axios.isAxiosError(err)) {
         console.error(err.response?.data);
       }
+      throw err;
     }
   };
   return (
