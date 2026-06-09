@@ -1,5 +1,10 @@
 import { Loader } from "@mantine/core";
 import { createBrowserRouter, Navigate } from "react-router";
+import {
+  authMiddleware,
+  guestMiddleware,
+} from "./middleware/authMiddleware.ts";
+import { userContext } from "./context/UserContext.ts";
 
 export const routes = createBrowserRouter([
   {
@@ -9,6 +14,7 @@ export const routes = createBrowserRouter([
   },
   {
     path: "auth",
+    middleware: [guestMiddleware],
     children: [
       {
         path: "login",
@@ -32,6 +38,11 @@ export const routes = createBrowserRouter([
   {
     path: "notes",
     HydrateFallback: Loader,
+    middleware: [authMiddleware],
+    loader: async ({ context }) => {
+      const user = context.get(userContext);
+      return { user: user };
+    },
     lazy: async () => {
       const { default: Component } = await import("./pages/app/Notes.tsx");
       return { Component };
@@ -49,3 +60,13 @@ export const routes = createBrowserRouter([
     ],
   },
 ]);
+
+export const ROUTES = {
+  login: "/auth/login",
+  register: "/auth/register",
+  notes: "/notes",
+};
+
+export const ROUTES_DYNAMICS = {
+  note: (id: string) => `/notes/${id}`,
+};

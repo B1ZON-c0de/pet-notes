@@ -1,0 +1,9 @@
+.auth-link {
+  text-decoration: none;
+  color: black;
+  transition: all ease 0.3s;
+}
+
+.auth-link:hover {
+  text-decoration: underline;
+}
