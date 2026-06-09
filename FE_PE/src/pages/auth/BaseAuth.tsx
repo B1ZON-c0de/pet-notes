@@ -24,7 +24,7 @@ interface DescNav {
   path: (typeof ROUTES)[keyof typeof ROUTES];
 }
 
-interface FormValues {
+export interface FormValues {
   name?: string;
   email: string;
   password: string;
@@ -61,7 +61,7 @@ export const BaseAuth = ({
   const initialFieldsVal: FormValues = Object.entries(fields).reduce(
     (acc, [key, field]) => {
       if (!field) return acc;
-      acc[key] = field.initialValue;
+      acc[key as keyof FormValues] = field.initialValue;
       return acc;
     },
     {} as FormValues,
@@ -79,7 +79,7 @@ export const BaseAuth = ({
   }
   if (fields.name) {
     validateFields.name = (value) =>
-      value.length < 2 ? ERR_INVALID_NAME : null;
+      value && value.length < 2 ? ERR_INVALID_NAME : null;
   }
 
   const form = useForm({

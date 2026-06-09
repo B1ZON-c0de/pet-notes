@@ -1,6 +1,6 @@
 import axios from "axios";
 import { userContext } from "../context/UserContext";
-import { redirect } from "react-router";
+import { redirect, type MiddlewareFunction } from "react-router";
 import type { RespondBackend, User } from "../types";
 import { ROUTES } from "../routes";
 import { ROUTES_BACKEND } from "../routesBackend";
@@ -15,13 +15,13 @@ async function getUser() {
     }
   } catch (err) {
     if (axios.isAxiosError(err)) {
-      console.error(err.response.data);
+      console.error(err.response?.data);
       return null;
     }
   }
 }
 
-export const authMiddleware = async ({ context }, next) => {
+export const authMiddleware: MiddlewareFunction = async ({ context }, next) => {
   const user = await getUser();
   if (!user) {
     throw redirect(ROUTES.login);
@@ -30,7 +30,10 @@ export const authMiddleware = async ({ context }, next) => {
   await next();
 };
 
-export const guestMiddleware = async ({ context }, next) => {
+export const guestMiddleware: MiddlewareFunction = async (
+  { context },
+  next,
+) => {
   const user = await getUser();
   if (user) {
     context.set(userContext, user);
