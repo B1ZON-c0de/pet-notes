@@ -12,6 +12,8 @@ import { useForm, type FormValidateInput } from "@mantine/form";
 import { Link } from "react-router";
 import { ROUTES } from "../../routes";
 import { useState } from "react";
+import axios from "axios";
+import { notifications } from "@mantine/notifications";
 
 interface BaseField {
   label: string;
@@ -96,12 +98,20 @@ export const BaseAuth = ({
         <Title order={1}>{pageLabel}</Title>
         <form
           onSubmit={form.onSubmit(async (values) => {
+            notifications.clean();
             setIsLoading(true);
             try {
               await submitFn(values);
               form.reset();
             } catch (err) {
-              console.error(err);
+              if (axios.isAxiosError(err)) {
+                notifications.show({
+                  title: "Ошибка",
+                  message: err.response?.data.error.message,
+                  color: "red",
+                  className: "notif-error",
+                });
+              }
             } finally {
               setIsLoading(false);
             }
