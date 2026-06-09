@@ -41,7 +41,7 @@ export const routes = createBrowserRouter([
     middleware: [authMiddleware],
     loader: async ({ context }) => {
       const user = context.get(userContext);
-      return { user: user };
+      return { user };
     },
     lazy: async () => {
       const { default: Component } = await import("./pages/app/Notes.tsx");
