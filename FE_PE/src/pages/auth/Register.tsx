@@ -1,6 +1,6 @@
 import axios from "axios";
 import { ROUTES } from "../../routes";
-import { BaseAuth } from "./BaseAuth";
+import { BaseAuth, type FormValues } from "./BaseAuth";
 import { useNavigate } from "react-router";
 import { ROUTES_BACKEND } from "../../routesBackend";
 import type { RespondBackend } from "../../types";
@@ -34,7 +34,7 @@ const registerFields = {
 
 const Register = () => {
   const navigate = useNavigate();
-  const registerFn = async (values) => {
+  const registerFn = async (values: FormValues) => {
     try {
       const res = await axios.post<RespondBackend<null>>(
         ROUTES_BACKEND.register,
@@ -44,7 +44,7 @@ const Register = () => {
       if (res.data.success) navigate(ROUTES.notes, { replace: true });
     } catch (err) {
       if (axios.isAxiosError(err)) {
-        console.error(err.response.data);
+        console.error(err.response?.data);
       }
     }
   };

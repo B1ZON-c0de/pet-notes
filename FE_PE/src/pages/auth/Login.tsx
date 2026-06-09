@@ -1,6 +1,6 @@
 import axios from "axios";
 import { ROUTES } from "../../routes";
-import { BaseAuth } from "./BaseAuth";
+import { BaseAuth, type FormValues } from "./BaseAuth";
 import { ROUTES_BACKEND } from "../../routesBackend";
 import type { RespondBackend } from "../../types";
 import { useNavigate } from "react-router";
@@ -25,7 +25,7 @@ const loginFields = {
 
 const Login = () => {
   const navigate = useNavigate();
-  const loginFn = async (values) => {
+  const loginFn = async (values: FormValues) => {
     try {
       const res = await axios.post<RespondBackend<null>>(
         ROUTES_BACKEND.login,
@@ -37,7 +37,7 @@ const Login = () => {
       }
     } catch (err) {
       if (axios.isAxiosError(err)) {
-        console.error(err.response.data);
+        console.error(err.response?.data);
       }
     }
   };
