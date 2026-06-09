@@ -43,6 +43,13 @@ interface Props {
   };
 }
 
+const PASSWORD_LENGTH = 6;
+const NAME_LENGTH = 2;
+const ERR_INVALID_EMAIL = "Неверный email";
+const ERR_INVALID_NAME = `Длина имени должна быть минимум ${NAME_LENGTH} символа`;
+const ERR_INVALID_PASSWORD = `Длина пароля должна быть минимум ${PASSWORD_LENGTH} символов`;
+const ERR_INVALID_REPEAT_PASSWORD = "Пароли должны совпадать";
+
 export const BaseAuth = ({
   pageLabel,
   descNav,
@@ -60,17 +67,17 @@ export const BaseAuth = ({
 
   const validateFields: FormValidateInput<FormValues> = {
     password: (value: string) =>
-      value.length < 6 ? "Длина пароля должна быть минимум 6 символа" : null,
+      value.length < 6 ? ERR_INVALID_PASSWORD : null,
     email: (value: string) =>
-      /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? null : "Неверный email",
+      /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? null : ERR_INVALID_EMAIL,
   };
   if (fields.repeatPassword) {
     validateFields.repeatPassword = (value, values) =>
-      value !== values.password ? "Пароли должны совпадать" : null;
+      value !== values.password ? ERR_INVALID_REPEAT_PASSWORD : null;
   }
   if (fields.name) {
     validateFields.name = (value) =>
-      value.length < 2 ? "Длина имени должна быть минимум 2 символа" : null;
+      value.length < 2 ? ERR_INVALID_NAME : null;
   }
 
   const form = useForm({
