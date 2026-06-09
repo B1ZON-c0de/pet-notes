@@ -1,5 +1,9 @@
+import axios from "axios";
 import { ROUTES } from "../../routes";
 import { BaseAuth } from "./BaseAuth";
+import { useNavigate } from "react-router";
+import { ROUTES_BACKEND } from "../../routesBackend";
+import type { RespondBackend } from "../../types";
 
 const descNav = {
   textNav: "Уже есть аккаунт?",
@@ -29,12 +33,28 @@ const registerFields = {
 };
 
 const Register = () => {
+  const navigate = useNavigate();
+  const registerFn = async (values) => {
+    try {
+      const res = await axios.post<RespondBackend<null>>(
+        ROUTES_BACKEND.register,
+        values,
+      );
+
+      if (res.data.success) navigate(ROUTES.notes, { replace: true });
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        console.error(err.response.data);
+      }
+    }
+  };
   return (
     <BaseAuth
       pageLabel="Регистрация в NOTES"
       submitLabel="Регистрация"
       descNav={descNav}
       fields={registerFields}
+      submitFn={registerFn}
     />
   );
 };

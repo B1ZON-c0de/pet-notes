@@ -35,6 +35,7 @@ interface Props {
   pageLabel: string;
   submitLabel: string;
   descNav: DescNav;
+  submitFn: (values: FormValues) => void;
   fields: {
     name?: BaseField;
     email: BaseField;
@@ -55,6 +56,7 @@ export const BaseAuth = ({
   descNav,
   submitLabel,
   fields,
+  submitFn,
 }: Props) => {
   const initialFieldsVal: FormValues = Object.entries(fields).reduce(
     (acc, [key, field]) => {
@@ -90,7 +92,7 @@ export const BaseAuth = ({
     <>
       <Stack h="100vh" align="center" justify="center" gap="md">
         <Title order={1}>{pageLabel}</Title>
-        <form onSubmit={form.onSubmit((values) => console.log(values))}>
+        <form onSubmit={form.onSubmit((values) => submitFn(values))}>
           <Fieldset variant="filled" w={350}>
             <Stack gap="md">
               {Object.entries(fields).map(([key, { label, placeholder }]) =>

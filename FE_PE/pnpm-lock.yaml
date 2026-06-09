@@ -20,6 +20,9 @@ importers:
       axios:
         specifier: ^1.17.0
         version: 1.17.0
+      config:
+        specifier: link:@react-router/dev/config
+        version: link:@react-router/dev/config
       react:
         specifier: ^19.2.6
         version: 19.2.7
