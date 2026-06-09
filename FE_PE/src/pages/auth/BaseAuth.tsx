@@ -4,7 +4,9 @@ import {
   PasswordInput,
   Space,
   Stack,
+  Text,
   TextInput,
+  Title,
 } from "@mantine/core";
 import { useForm, type FormValidateInput } from "@mantine/form";
 import { Link } from "react-router";
@@ -80,7 +82,7 @@ export const BaseAuth = ({
   return (
     <>
       <Stack h="100vh" align="center" justify="center" gap="md">
-        <h1>{pageLabel}</h1>
+        <Title order={1}>{pageLabel}</Title>
         <form onSubmit={form.onSubmit((values) => console.log(values))}>
           <Fieldset variant="filled" w={350}>
             <Stack gap="md">
@@ -109,9 +111,12 @@ export const BaseAuth = ({
             {submitLabel}
           </Button>
         </form>
-        <p>
-          {descNav.textNav} <Link to={descNav.path}>{descNav.labelLink}</Link>
-        </p>
+        <Text c="dimmed" size="md">
+          {descNav.textNav}{" "}
+          <Link className="auth-link" replace to={descNav.path}>
+            {descNav.labelLink}
+          </Link>
+        </Text>
       </Stack>
     </>
   );
