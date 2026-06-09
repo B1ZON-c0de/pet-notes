@@ -54,5 +54,8 @@ export const ROUTES = {
   login: "/auth/login",
   register: "/auth/register",
   notes: "/notes",
+};
+
+export const ROUTES_DYNAMICS = {
   note: (id: string) => `/notes/${id}`,
 };
