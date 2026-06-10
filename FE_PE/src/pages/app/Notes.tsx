@@ -1,17 +1,17 @@
 import axios from "axios";
 import {
-  Link,
   Outlet,
   useLoaderData,
   useNavigate,
   useSearchParams,
 } from "react-router";
 import { ROUTES_BACKEND } from "../../routesBackend";
-import { ROUTES, ROUTES_DYNAMICS } from "../../routes";
+import { ROUTES } from "../../routes";
 import { AppShell, Button, Flex, TextInput } from "@mantine/core";
 import { useDebouncedValue } from "@mantine/hooks";
 import { useEffect, useState } from "react";
 import type { Note, User } from "../../types";
+import NavNote from "../../components/NavNote";
 
 interface LoaderProps {
   user: User;
@@ -62,13 +62,7 @@ const Notes = () => {
         </Flex>
       </AppShell.Header>
       <AppShell.Navbar p="md">
-        {notes &&
-          notes.map((note) => (
-            <Link to={ROUTES_DYNAMICS.note(note.id)} key={note.id}>
-              {note.title}
-              {note.text}
-            </Link>
-          ))}
+        {notes && notes.map((note) => <NavNote key={note.id} note={note} />)}
       </AppShell.Navbar>
       <AppShell.Main>
         <Outlet />
