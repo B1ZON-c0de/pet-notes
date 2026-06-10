@@ -7,8 +7,8 @@ import {
 } from "react-router";
 import { ROUTES_BACKEND } from "../../routesBackend";
 import { ROUTES } from "../../routes";
-import { AppShell, Button, Flex, TextInput } from "@mantine/core";
-import { useDebouncedValue } from "@mantine/hooks";
+import { AppShell, Burger, Button, Flex, TextInput } from "@mantine/core";
+import { useDebouncedValue, useDisclosure } from "@mantine/hooks";
 import { useEffect, useState } from "react";
 import type { Note, User } from "../../types";
 import NavNote from "../../components/NavNote";
@@ -24,6 +24,7 @@ const Notes = () => {
     searchParams.get("search") || "",
   );
   const [debouncedValue] = useDebouncedValue(searchQuery, 200);
+  const [opened, { toggle }] = useDisclosure();
 
   useEffect(() => {
     const params = new URLSearchParams(searchParams);
@@ -47,18 +48,21 @@ const Notes = () => {
     <AppShell
       padding="md"
       header={{ height: 80 }}
-      navbar={{ width: 300, breakpoint: "sm" }}
+      navbar={{ width: 300, breakpoint: "sm", collapsed: { mobile: !opened } }}
     >
       <AppShell.Header p="md">
-        <Flex justify="flex-end" gap="md">
-          <TextInput
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          <p>{user.name}</p>
-          <Button variant="filled" onClick={logoutFn} size="md">
-            Выйти
-          </Button>
+        <Flex align="center" gap="md">
+          <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="md" />
+          <Flex ml="auto" gap="md" align="center">
+            <TextInput
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <p>{user.name}</p>
+            <Button variant="filled" onClick={logoutFn} size="md">
+              Выйти
+            </Button>
+          </Flex>
         </Flex>
       </AppShell.Header>
       <AppShell.Navbar p="md">
