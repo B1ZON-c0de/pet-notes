@@ -80,8 +80,9 @@ export const routes = createBrowserRouter([
           if (method === "PATCH") {
             const formData = await request.formData();
             const text = formData.get("text");
+            const title = formData.get("title");
 
-            await patchNote(params.id, String(text));
+            await patchNote(params.id, String(text), String(title));
             return redirect(`/notes/${params.id}`);
           }
         },
