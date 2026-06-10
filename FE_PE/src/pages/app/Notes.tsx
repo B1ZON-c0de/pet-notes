@@ -90,6 +90,7 @@ const Notes = () => {
             <p>{user.name}</p>
             <Button
               disabled={isEditing}
+              color="red"
               variant="filled"
               onClick={logoutFn}
               size="md"
@@ -125,7 +126,7 @@ const Notes = () => {
             <Form action="/notes" method="post">
               <Button
                 disabled={isEditing}
-                color="gray"
+                color="blue"
                 variant="filled"
                 size="md"
                 type="submit"

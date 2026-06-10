@@ -36,6 +36,7 @@ const NotePage = () => {
         <MDXEditor
           ref={refTitle}
           markdown={note.title}
+          placeholder="Заголовок"
           plugins={[
             headingsPlugin(),
             listsPlugin(),
@@ -51,6 +52,7 @@ const NotePage = () => {
         <MDXEditor
           ref={refText}
           markdown={note.text}
+          placeholder="Начните писать текст..."
           plugins={[
             headingsPlugin(),
             listsPlugin(),
