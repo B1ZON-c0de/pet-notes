@@ -1,10 +1,8 @@
 import { Loader } from "@mantine/core";
 import { createBrowserRouter, Navigate } from "react-router";
-import {
-  authMiddleware,
-  guestMiddleware,
-} from "./middleware/authMiddleware.ts";
+import { authMiddleware } from "./middleware/authMiddleware.ts";
 import { userContext } from "./context/UserContext.ts";
+import { guestMiddleware } from "./middleware/guestMiddleware.ts";
 
 export const routes = createBrowserRouter([
   {
