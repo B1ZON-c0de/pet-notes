@@ -1,10 +1,12 @@
 import { Loader } from "@mantine/core";
-import { createBrowserRouter, Navigate } from "react-router";
+import { createBrowserRouter, Navigate, redirect } from "react-router";
 import { authMiddleware } from "./middleware/authMiddleware.ts";
 import { userContext } from "./context/UserContext.ts";
 import { guestMiddleware } from "./middleware/guestMiddleware.ts";
 import { getNotes } from "./api/getNotes.ts";
 import { getOneNote } from "./api/getOneNote.ts";
+import { addNote } from "./api/addNote.ts";
+import { deleteNote } from "./api/deleteNote.ts";
 
 export const ROUTES = {
   login: "/auth/login",
@@ -49,6 +51,9 @@ export const routes = createBrowserRouter([
     path: "notes",
     HydrateFallback: Loader,
     middleware: [authMiddleware],
+    action: async () => {
+      await addNote();
+    },
     loader: async ({ request, context }) => {
       const url = new URL(request.url);
       const search = url.searchParams.get("search");
@@ -64,6 +69,11 @@ export const routes = createBrowserRouter([
       {
         path: ":id",
         HydrateFallback: Loader,
+        action: async ({ params }) => {
+          if (params.id == "") return;
+          await deleteNote(params.id);
+          return redirect("/notes");
+        },
         loader: async ({ params }) => {
           const note = await getOneNote(params.id);
           return { note };

@@ -1,17 +1,28 @@
 import axios from "axios";
 import {
-  Link,
+  Form,
   Outlet,
   useLoaderData,
   useNavigate,
   useSearchParams,
 } from "react-router";
 import { ROUTES_BACKEND } from "../../routesBackend";
-import { ROUTES, ROUTES_DYNAMICS } from "../../routes";
-import { AppShell, Button, Flex, TextInput } from "@mantine/core";
-import { useDebouncedValue } from "@mantine/hooks";
+import { ROUTES } from "../../routes";
+import {
+  AppShell,
+  Burger,
+  Button,
+  Center,
+  Flex,
+  Modal,
+  ScrollArea,
+  TextInput,
+} from "@mantine/core";
+import { useDebouncedValue, useDisclosure } from "@mantine/hooks";
 import { useEffect, useState } from "react";
 import type { Note, User } from "../../types";
+import NavNote from "../../components/NavNote";
+import DeleteModal from "../../components/DeleteModal";
 
 interface LoaderProps {
   user: User;
@@ -23,7 +34,11 @@ const Notes = () => {
   const [searchQuery, setSearchQuery] = useState(
     searchParams.get("search") || "",
   );
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [debouncedValue] = useDebouncedValue(searchQuery, 200);
+  const [burgerOpened, { toggle: burgerToggle }] = useDisclosure();
+  const [modalOpened, { open: modalOpen, close: modalClose }] =
+    useDisclosure(false);
 
   useEffect(() => {
     const params = new URLSearchParams(searchParams);
@@ -47,28 +62,61 @@ const Notes = () => {
     <AppShell
       padding="md"
       header={{ height: 80 }}
-      navbar={{ width: 300, breakpoint: "sm" }}
+      navbar={{
+        width: 300,
+        breakpoint: "sm",
+        collapsed: { mobile: !burgerOpened },
+      }}
     >
+      <Modal opened={modalOpened} onClose={modalClose} centered>
+        <DeleteModal closeModal={modalClose} id={selectedId || ""} />
+      </Modal>
       <AppShell.Header p="md">
-        <Flex justify="flex-end" gap="md">
-          <TextInput
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+        <Flex align="center" gap="md">
+          <Burger
+            opened={burgerOpened}
+            onClick={burgerToggle}
+            hiddenFrom="sm"
+            size="md"
           />
-          <p>{user.name}</p>
-          <Button variant="filled" onClick={logoutFn} size="md">
-            Выйти
-          </Button>
+          <Flex ml="auto" gap="md" align="center">
+            <TextInput
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <p>{user.name}</p>
+            <Button variant="filled" onClick={logoutFn} size="md">
+              Выйти
+            </Button>
+          </Flex>
         </Flex>
       </AppShell.Header>
       <AppShell.Navbar p="md">
-        {notes &&
-          notes.map((note) => (
-            <Link to={ROUTES_DYNAMICS.note(note.id)} key={note.id}>
-              {note.title}
-              {note.text}
-            </Link>
-          ))}
+        <AppShell.Section grow component={ScrollArea}>
+          {notes &&
+            notes.map((note) => (
+              <NavNote
+                onDelete={() => {
+                  modalOpen();
+                  setSelectedId(note.id);
+                }}
+                key={note.id}
+                note={note}
+              />
+            ))}
+        </AppShell.Section>
+        <AppShell.Section
+          p="md"
+          style={{ borderTop: "1px solid var(--mantine-color-default-border)" }}
+        >
+          <Center>
+            <Form action="/notes" method="post">
+              <Button color="gray" variant="filled" size="md" type="submit">
+                Добавить новую запись
+              </Button>
+            </Form>
+          </Center>
+        </AppShell.Section>
       </AppShell.Navbar>
       <AppShell.Main>
         <Outlet />

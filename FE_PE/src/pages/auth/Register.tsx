@@ -1,6 +1,6 @@
 import axios from "axios";
 import { ROUTES } from "../../routes";
-import { BaseAuth, type FormValues } from "./BaseAuth";
+import { BaseAuth, type FormValues } from "../../components/BaseAuth";
 import { useNavigate } from "react-router";
 import { ROUTES_BACKEND } from "../../routesBackend";
 import type { RespondBackend } from "../../types";

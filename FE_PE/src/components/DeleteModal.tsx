@@ -1,0 +1,34 @@
+import { Button, Flex, Title } from "@mantine/core";
+import { Form } from "react-router";
+
+export default function DeleteModal({
+  closeModal,
+  id,
+}: {
+  closeModal: () => void;
+  id: string;
+}) {
+  return (
+    <Flex direction="column" gap="xl" align="center" justify="center">
+      <Title order={2} ta="center">
+        Вы действительно хотите удалить запись?
+      </Title>
+      <Form action={"/notes/" + id} method="delete">
+        <Flex gap="md" justify="space-between" align="center">
+          <Button size="md" variant="filled" color="blue" onClick={closeModal}>
+            Отмена
+          </Button>
+          <Button
+            size="md"
+            variant="filled"
+            color="red"
+            type="submit"
+            onClick={closeModal}
+          >
+            Удалить
+          </Button>
+        </Flex>
+      </Form>
+    </Flex>
+  );
+}
