@@ -1,16 +1,26 @@
 import { Loader } from "@mantine/core";
 import { createBrowserRouter, Navigate } from "react-router";
-import {
-  authMiddleware,
-  guestMiddleware,
-} from "./middleware/authMiddleware.ts";
+import { authMiddleware } from "./middleware/authMiddleware.ts";
 import { userContext } from "./context/UserContext.ts";
+import { guestMiddleware } from "./middleware/guestMiddleware.ts";
+import { getNotes } from "./api/getNotes.ts";
+import { getOneNote } from "./api/getOneNote.ts";
+
+export const ROUTES = {
+  login: "/auth/login",
+  register: "/auth/register",
+  notes: "/notes",
+};
+
+export const ROUTES_DYNAMICS = {
+  note: (id: string) => `/notes/${id}`,
+};
 
 export const routes = createBrowserRouter([
   {
     path: "/",
     index: true,
-    element: <Navigate to="/notes" replace />,
+    element: <Navigate to={ROUTES.notes} replace />,
   },
   {
     path: "auth",
@@ -39,9 +49,12 @@ export const routes = createBrowserRouter([
     path: "notes",
     HydrateFallback: Loader,
     middleware: [authMiddleware],
-    loader: async ({ context }) => {
+    loader: async ({ request, context }) => {
+      const url = new URL(request.url);
+      const search = url.searchParams.get("search");
+      const notes = await getNotes(search);
       const user = context.get(userContext);
-      return { user };
+      return { user, notes: notes ? notes : null };
     },
     lazy: async () => {
       const { default: Component } = await import("./pages/app/Notes.tsx");
@@ -51,6 +64,10 @@ export const routes = createBrowserRouter([
       {
         path: ":id",
         HydrateFallback: Loader,
+        loader: async ({ params }) => {
+          const note = await getOneNote(params.id);
+          return { note };
+        },
         lazy: async () => {
           const { default: Component } =
             await import("./pages/app/NotePage.tsx");
@@ -60,13 +77,3 @@ export const routes = createBrowserRouter([
     ],
   },
 ]);
-
-export const ROUTES = {
-  login: "/auth/login",
-  register: "/auth/register",
-  notes: "/notes",
-};
-
-export const ROUTES_DYNAMICS = {
-  note: (id: string) => `/notes/${id}`,
-};
