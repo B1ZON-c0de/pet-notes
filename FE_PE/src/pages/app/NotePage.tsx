@@ -79,8 +79,8 @@ const NotePage = () => {
                 "text",
               ) as HTMLInputElement;
 
-              inputTitle.value = refTitle.current?.getMarkdown();
-              inputText.value = refText.current?.getMarkdown();
+              inputTitle.value = refTitle.current?.getMarkdown() || "";
+              inputText.value = refText.current?.getMarkdown() || "";
 
               setIsEditing(false);
             }}

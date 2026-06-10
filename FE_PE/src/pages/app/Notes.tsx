@@ -16,6 +16,7 @@ import {
   Flex,
   Modal,
   ScrollArea,
+  Text,
   TextInput,
 } from "@mantine/core";
 import { useDebouncedValue, useDisclosure } from "@mantine/hooks";
@@ -100,7 +101,7 @@ const Notes = () => {
       </AppShell.Header>
       <AppShell.Navbar p="md">
         <AppShell.Section grow component={ScrollArea}>
-          {notes &&
+          {notes ? (
             notes.map((note) => (
               <NavNote
                 disabled={isEditing}
@@ -111,7 +112,10 @@ const Notes = () => {
                 key={note.id}
                 note={note}
               />
-            ))}
+            ))
+          ) : (
+            <Text c="dimmed">Записей ещё нет</Text>
+          )}
         </AppShell.Section>
         <AppShell.Section
           p="md"
