@@ -1,3 +1,8 @@
+// Это нужно чтобы работал react-markdown
+import Prism from "prismjs";
+if (typeof window !== undefined) {
+  (window as any).Prism = Prism;
+}
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import { routes } from "./routes";
