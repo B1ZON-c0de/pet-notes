@@ -14,6 +14,7 @@ import {
   Button,
   Center,
   Flex,
+  Modal,
   ScrollArea,
   TextInput,
 } from "@mantine/core";
@@ -21,6 +22,7 @@ import { useDebouncedValue, useDisclosure } from "@mantine/hooks";
 import { useEffect, useState } from "react";
 import type { Note, User } from "../../types";
 import NavNote from "../../components/NavNote";
+import DeleteModal from "../../components/DeleteModal";
 
 interface LoaderProps {
   user: User;
@@ -32,8 +34,11 @@ const Notes = () => {
   const [searchQuery, setSearchQuery] = useState(
     searchParams.get("search") || "",
   );
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [debouncedValue] = useDebouncedValue(searchQuery, 200);
-  const [opened, { toggle }] = useDisclosure();
+  const [burgerOpened, { toggle: burgerToggle }] = useDisclosure();
+  const [modalOpened, { open: modalOpen, close: modalClose }] =
+    useDisclosure(false);
 
   useEffect(() => {
     const params = new URLSearchParams(searchParams);
@@ -57,11 +62,23 @@ const Notes = () => {
     <AppShell
       padding="md"
       header={{ height: 80 }}
-      navbar={{ width: 300, breakpoint: "sm", collapsed: { mobile: !opened } }}
+      navbar={{
+        width: 300,
+        breakpoint: "sm",
+        collapsed: { mobile: !burgerOpened },
+      }}
     >
+      <Modal opened={modalOpened} onClose={modalClose} centered>
+        <DeleteModal closeModal={modalClose} id={selectedId} />
+      </Modal>
       <AppShell.Header p="md">
         <Flex align="center" gap="md">
-          <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="md" />
+          <Burger
+            opened={burgerOpened}
+            onClick={burgerToggle}
+            hiddenFrom="sm"
+            size="md"
+          />
           <Flex ml="auto" gap="md" align="center">
             <TextInput
               value={searchQuery}
@@ -76,14 +93,24 @@ const Notes = () => {
       </AppShell.Header>
       <AppShell.Navbar p="md">
         <AppShell.Section grow component={ScrollArea}>
-          {notes && notes.map((note) => <NavNote key={note.id} note={note} />)}
+          {notes &&
+            notes.map((note) => (
+              <NavNote
+                onDelete={() => {
+                  modalOpen();
+                  setSelectedId(note.id);
+                }}
+                key={note.id}
+                note={note}
+              />
+            ))}
         </AppShell.Section>
         <AppShell.Section
           p="md"
           style={{ borderTop: "1px solid var(--mantine-color-default-border)" }}
         >
           <Center>
-            <Form method="post">
+            <Form action="/notes" method="post">
               <Button color="gray" variant="filled" size="md" type="submit">
                 Добавить новую запись
               </Button>

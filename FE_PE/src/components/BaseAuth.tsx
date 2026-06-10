@@ -10,10 +10,10 @@ import {
 } from "@mantine/core";
 import { useForm, type FormValidateInput } from "@mantine/form";
 import { Link } from "react-router";
-import { ROUTES } from "../../routes";
 import { useState } from "react";
 import axios from "axios";
 import { notifications } from "@mantine/notifications";
+import type { ROUTES } from "../routes";
 
 interface BaseField {
   label: string;
