@@ -118,7 +118,7 @@ const Notes = () => {
           </Center>
         </AppShell.Section>
       </AppShell.Navbar>
-      <AppShell.Main>
+      <AppShell.Main component={ScrollArea}>
         <Outlet />
       </AppShell.Main>
     </AppShell>
