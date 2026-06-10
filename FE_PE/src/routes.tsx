@@ -5,6 +5,7 @@ import { userContext } from "./context/UserContext.ts";
 import { guestMiddleware } from "./middleware/guestMiddleware.ts";
 import { getNotes } from "./api/getNotes.ts";
 import { getOneNote } from "./api/getOneNote.ts";
+import { addNote } from "./api/addNote.ts";
 
 export const ROUTES = {
   login: "/auth/login",
@@ -49,6 +50,9 @@ export const routes = createBrowserRouter([
     path: "notes",
     HydrateFallback: Loader,
     middleware: [authMiddleware],
+    action: async () => {
+      await addNote();
+    },
     loader: async ({ request, context }) => {
       const url = new URL(request.url);
       const search = url.searchParams.get("search");

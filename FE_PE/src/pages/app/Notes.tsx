@@ -1,5 +1,6 @@
 import axios from "axios";
 import {
+  Form,
   Outlet,
   useLoaderData,
   useNavigate,
@@ -7,7 +8,15 @@ import {
 } from "react-router";
 import { ROUTES_BACKEND } from "../../routesBackend";
 import { ROUTES } from "../../routes";
-import { AppShell, Burger, Button, Flex, TextInput } from "@mantine/core";
+import {
+  AppShell,
+  Burger,
+  Button,
+  Center,
+  Flex,
+  ScrollArea,
+  TextInput,
+} from "@mantine/core";
 import { useDebouncedValue, useDisclosure } from "@mantine/hooks";
 import { useEffect, useState } from "react";
 import type { Note, User } from "../../types";
@@ -66,7 +75,21 @@ const Notes = () => {
         </Flex>
       </AppShell.Header>
       <AppShell.Navbar p="md">
-        {notes && notes.map((note) => <NavNote key={note.id} note={note} />)}
+        <AppShell.Section grow component={ScrollArea}>
+          {notes && notes.map((note) => <NavNote key={note.id} note={note} />)}
+        </AppShell.Section>
+        <AppShell.Section
+          p="md"
+          style={{ borderTop: "1px solid var(--mantine-color-default-border)" }}
+        >
+          <Center>
+            <Form method="post">
+              <Button color="gray" variant="filled" size="md" type="submit">
+                Добавить новую запись
+              </Button>
+            </Form>
+          </Center>
+        </AppShell.Section>
       </AppShell.Navbar>
       <AppShell.Main>
         <Outlet />
