@@ -3,9 +3,15 @@ import type { Note, RespondBackend } from "../types";
 import { notifications } from "@mantine/notifications";
 import { ROUTES_BACKEND } from "../routesBackend";
 
-export async function getNotes(): Promise<Note[] | null> {
+export async function getNotes(
+  search: string | undefined,
+): Promise<Note[] | null> {
   try {
-    const res = await axios.get<RespondBackend<Note[]>>(ROUTES_BACKEND.notes);
+    const res = await axios.get<RespondBackend<Note[]>>(ROUTES_BACKEND.notes, {
+      params: {
+        search: search ? search : undefined,
+      },
+    });
     if (res.data.success) {
       return res.data.data;
     }

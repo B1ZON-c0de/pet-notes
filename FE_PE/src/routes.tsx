@@ -3,6 +3,7 @@ import { createBrowserRouter, Navigate } from "react-router";
 import { authMiddleware } from "./middleware/authMiddleware.ts";
 import { userContext } from "./context/UserContext.ts";
 import { guestMiddleware } from "./middleware/guestMiddleware.ts";
+import { getNotes } from "./api/getNotes.ts";
 
 export const routes = createBrowserRouter([
   {
@@ -37,9 +38,13 @@ export const routes = createBrowserRouter([
     path: "notes",
     HydrateFallback: Loader,
     middleware: [authMiddleware],
-    loader: async ({ context }) => {
+    loader: async ({ request, context }) => {
+      const url = new URL(request.url);
+      const search = url.searchParams.get("search");
+      const notes = await getNotes(search);
       const user = context.get(userContext);
-      return { user };
+      console.log(notes);
+      return { user, notes };
     },
     lazy: async () => {
       const { default: Component } = await import("./pages/app/Notes.tsx");
