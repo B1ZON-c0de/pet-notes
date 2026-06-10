@@ -20,6 +20,8 @@ interface OutletProps {
   isEditing: boolean;
   setIsEditing: (v: boolean) => void;
 }
+const MAX_TITLE_LENGTH = 100;
+
 const NotePage = () => {
   const { note } = useLoaderData<LoaderProps>();
   const refText = useRef<MDXEditorMethods>(null);
@@ -61,7 +63,7 @@ const NotePage = () => {
         <Markdown>{note.text}</Markdown>
       )}
       {isEditing ? (
-        <Flex pos="absolute" gap="md" align="center" bottom={20} right={20}>
+        <Flex pos="fixed" gap="md" align="center" bottom={20} right={20}>
           <Button
             variant="filled"
             size="md"
@@ -79,7 +81,10 @@ const NotePage = () => {
                 "text",
               ) as HTMLInputElement;
 
-              inputTitle.value = refTitle.current?.getMarkdown() || "";
+              inputTitle.value = (refTitle.current?.getMarkdown() || "").slice(
+                0,
+                MAX_TITLE_LENGTH,
+              );
               inputText.value = refText.current?.getMarkdown() || "";
 
               setIsEditing(false);
@@ -97,7 +102,7 @@ const NotePage = () => {
       ) : (
         <Button
           variant="filled"
-          pos="absolute"
+          pos="fixed"
           bottom={20}
           right={20}
           size="md"
