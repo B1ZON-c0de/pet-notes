@@ -6,11 +6,21 @@ import { guestMiddleware } from "./middleware/guestMiddleware.ts";
 import { getNotes } from "./api/getNotes.ts";
 import { getOneNote } from "./api/getOneNote.ts";
 
+export const ROUTES = {
+  login: "/auth/login",
+  register: "/auth/register",
+  notes: "/notes",
+};
+
+export const ROUTES_DYNAMICS = {
+  note: (id: string) => `/notes/${id}`,
+};
+
 export const routes = createBrowserRouter([
   {
     path: "/",
     index: true,
-    element: <Navigate to="/notes" replace />,
+    element: <Navigate to={ROUTES.notes} replace />,
   },
   {
     path: "auth",
@@ -67,13 +77,3 @@ export const routes = createBrowserRouter([
     ],
   },
 ]);
-
-export const ROUTES = {
-  login: "/auth/login",
-  register: "/auth/register",
-  notes: "/notes",
-};
-
-export const ROUTES_DYNAMICS = {
-  note: (id: string) => `/notes/${id}`,
-};
