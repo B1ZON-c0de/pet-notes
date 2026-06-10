@@ -14,9 +14,11 @@
     "@mantine/form": "^9.3.0",
     "@mantine/hooks": "^9.3.0",
     "@mantine/notifications": "^9.3.0",
+    "@uiw/react-md-editor": "^4.1.1",
     "axios": "^1.17.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
+    "react-markdown": "^10.1.0",
     "react-router": "^7.17.0"
   },
   "devDependencies": {
