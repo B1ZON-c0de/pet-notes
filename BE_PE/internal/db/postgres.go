@@ -61,7 +61,7 @@ func Migrate(db *sql.DB) error {
 		`,
 		`CREATE TABLE IF NOT EXISTS notes (
 			id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-			title VARCHAR(255) NOT NULL DEFAULT 'Новая заметка',
+			title VARCHAR(255) NOT NULL DEFAULT '## Новая заметка',
 			text TEXT,
 			created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
 			updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,

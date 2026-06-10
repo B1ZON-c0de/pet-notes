@@ -7,6 +7,7 @@ import { getNotes } from "./api/getNotes.ts";
 import { getOneNote } from "./api/getOneNote.ts";
 import { addNote } from "./api/addNote.ts";
 import { deleteNote } from "./api/deleteNote.ts";
+import { patchNote } from "./api/patchNote.ts";
 
 export const ROUTES = {
   login: "/auth/login",
@@ -69,10 +70,20 @@ export const routes = createBrowserRouter([
       {
         path: ":id",
         HydrateFallback: Loader,
-        action: async ({ params }) => {
-          if (params.id == "") return;
-          await deleteNote(params.id);
-          return redirect("/notes");
+        action: async ({ request, params }) => {
+          const method = request.method;
+          if (method === "DELETE") {
+            await deleteNote(params.id);
+            return redirect("/notes");
+          }
+          if (method === "PATCH") {
+            const formData = await request.formData();
+            const text = formData.get("text");
+            const title = formData.get("title");
+
+            await patchNote(params.id, String(text), String(title));
+            return redirect(`/notes/${params.id}`);
+          }
         },
         loader: async ({ params }) => {
           const note = await getOneNote(params.id);
