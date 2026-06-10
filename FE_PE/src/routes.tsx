@@ -4,6 +4,7 @@ import { authMiddleware } from "./middleware/authMiddleware.ts";
 import { userContext } from "./context/UserContext.ts";
 import { guestMiddleware } from "./middleware/guestMiddleware.ts";
 import { getNotes } from "./api/getNotes.ts";
+import { getOneNote } from "./api/getOneNote.ts";
 
 export const routes = createBrowserRouter([
   {
@@ -43,7 +44,6 @@ export const routes = createBrowserRouter([
       const search = url.searchParams.get("search");
       const notes = await getNotes(search);
       const user = context.get(userContext);
-      console.log(notes);
       return { user, notes };
     },
     lazy: async () => {
@@ -54,6 +54,10 @@ export const routes = createBrowserRouter([
       {
         path: ":id",
         HydrateFallback: Loader,
+        loader: async ({ params }) => {
+          const note = await getOneNote(params.id);
+          return { note };
+        },
         lazy: async () => {
           const { default: Component } =
             await import("./pages/app/NotePage.tsx");
