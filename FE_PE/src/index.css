@@ -7,3 +7,19 @@
 .auth-link:hover {
   text-decoration: underline;
 }
+
+.delete-btn {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.note-link:hover .delete-btn {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.note-link[data-active="true"] .delete-btn {
+  opacity: 1;
+  pointer-events: auto;
+}
