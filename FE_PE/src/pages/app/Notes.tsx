@@ -69,7 +69,7 @@ const Notes = () => {
       }}
     >
       <Modal opened={modalOpened} onClose={modalClose} centered>
-        <DeleteModal closeModal={modalClose} id={selectedId} />
+        <DeleteModal closeModal={modalClose} id={selectedId || ""} />
       </Modal>
       <AppShell.Header p="md">
         <Flex align="center" gap="md">

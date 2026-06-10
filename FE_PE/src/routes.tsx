@@ -70,6 +70,7 @@ export const routes = createBrowserRouter([
         path: ":id",
         HydrateFallback: Loader,
         action: async ({ params }) => {
+          if (params.id == "") return;
           await deleteNote(params.id);
           return redirect("/notes");
         },
