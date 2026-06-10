@@ -34,6 +34,7 @@ const Notes = () => {
   const [searchQuery, setSearchQuery] = useState(
     searchParams.get("search") || "",
   );
+  const [isEditing, setIsEditing] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [debouncedValue] = useDebouncedValue(searchQuery, 200);
   const [burgerOpened, { toggle: burgerToggle }] = useDisclosure();
@@ -83,9 +84,15 @@ const Notes = () => {
             <TextInput
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              disabled={isEditing}
             />
             <p>{user.name}</p>
-            <Button variant="filled" onClick={logoutFn} size="md">
+            <Button
+              disabled={isEditing}
+              variant="filled"
+              onClick={logoutFn}
+              size="md"
+            >
               Выйти
             </Button>
           </Flex>
@@ -96,6 +103,7 @@ const Notes = () => {
           {notes &&
             notes.map((note) => (
               <NavNote
+                disabled={isEditing}
                 onDelete={() => {
                   modalOpen();
                   setSelectedId(note.id);
@@ -111,7 +119,13 @@ const Notes = () => {
         >
           <Center>
             <Form action="/notes" method="post">
-              <Button color="gray" variant="filled" size="md" type="submit">
+              <Button
+                disabled={isEditing}
+                color="gray"
+                variant="filled"
+                size="md"
+                type="submit"
+              >
                 Добавить новую запись
               </Button>
             </Form>
@@ -119,7 +133,7 @@ const Notes = () => {
         </AppShell.Section>
       </AppShell.Navbar>
       <AppShell.Main component={ScrollArea}>
-        <Outlet />
+        <Outlet context={{ isEditing, setIsEditing }} />
       </AppShell.Main>
     </AppShell>
   );

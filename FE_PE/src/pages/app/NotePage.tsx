@@ -1,9 +1,9 @@
-import { Form, useLoaderData } from "react-router";
+import { Form, useLoaderData, useOutletContext } from "react-router";
 import type { Note } from "../../types";
 import { Button, Flex, Text } from "@mantine/core";
 import { dateFormatter } from "../../utils/dateFormatter";
 import Markdown from "react-markdown";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import {
   headingsPlugin,
   listsPlugin,
@@ -16,11 +16,15 @@ import {
 interface LoaderProps {
   note: Note;
 }
+interface OutletProps {
+  isEditing: boolean;
+  setIsEditing: (v: boolean) => void;
+}
 const NotePage = () => {
   const { note } = useLoaderData<LoaderProps>();
-  const [isEditing, setIsEditing] = useState(false);
   const refText = useRef<MDXEditorMethods>(null);
   const refTitle = useRef<MDXEditorMethods>(null);
+  const { isEditing, setIsEditing } = useOutletContext<OutletProps>();
   return (
     <>
       <Text ta="center" c="dimmed">

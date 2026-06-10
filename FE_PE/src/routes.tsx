@@ -72,7 +72,6 @@ export const routes = createBrowserRouter([
         HydrateFallback: Loader,
         action: async ({ request, params }) => {
           const method = request.method;
-          console.log(method);
           if (method === "DELETE") {
             await deleteNote(params.id);
             return redirect("/notes");

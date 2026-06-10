@@ -10,6 +10,7 @@ import removeMd from "remove-markdown";
 interface Props {
   note: Note;
   onDelete: () => void;
+  disabled: boolean;
 }
 
 function NoteTitle({ title }: { title: string }) {
@@ -27,11 +28,12 @@ function NoteDesc({ time, text }: { time: string; text: string }) {
   );
 }
 
-export default function NavNote({ note, onDelete }: Props) {
+export default function NavNote({ note, onDelete, disabled }: Props) {
   const { id } = useParams();
   return (
     <NavLink
       className="note-link"
+      disabled={disabled}
       component={Link}
       active={note.id === id}
       to={ROUTES_DYNAMICS.note(note.id)}
