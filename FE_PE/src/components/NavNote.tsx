@@ -4,6 +4,8 @@ import { ROUTES_DYNAMICS } from "../routes";
 import { CloseButton, Flex, NavLink, Text, Title } from "@mantine/core";
 import { dateFormatter } from "../utils/dateFormatter";
 import { truncateText } from "../utils/truncateText";
+import Markdown from "react-markdown";
+import removeMd from "remove-markdown";
 
 interface Props {
   note: Note;
@@ -11,7 +13,7 @@ interface Props {
 }
 
 function NoteTitle({ title }: { title: string }) {
-  return <Title order={5}>{title}</Title>;
+  return <Title order={5}>{removeMd(title)}</Title>;
 }
 
 function NoteDesc({ time, text }: { time: string; text: string }) {
@@ -20,7 +22,7 @@ function NoteDesc({ time, text }: { time: string; text: string }) {
       <Text fw={500} c="dark">
         {dateFormatter(time)}
       </Text>
-      <Text>{truncateText(text, 20)}</Text>
+      <Markdown>{truncateText(removeMd(text), 15)}</Markdown>
     </Flex>
   );
 }
