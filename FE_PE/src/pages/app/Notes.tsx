@@ -16,6 +16,7 @@ import {
   Flex,
   Modal,
   ScrollArea,
+  Text,
   TextInput,
 } from "@mantine/core";
 import { useDebouncedValue, useDisclosure } from "@mantine/hooks";
@@ -34,6 +35,7 @@ const Notes = () => {
   const [searchQuery, setSearchQuery] = useState(
     searchParams.get("search") || "",
   );
+  const [isEditing, setIsEditing] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [debouncedValue] = useDebouncedValue(searchQuery, 200);
   const [burgerOpened, { toggle: burgerToggle }] = useDisclosure();
@@ -83,9 +85,16 @@ const Notes = () => {
             <TextInput
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              disabled={isEditing}
             />
             <p>{user.name}</p>
-            <Button variant="filled" onClick={logoutFn} size="md">
+            <Button
+              disabled={isEditing}
+              color="red"
+              variant="filled"
+              onClick={logoutFn}
+              size="md"
+            >
               Выйти
             </Button>
           </Flex>
@@ -93,9 +102,10 @@ const Notes = () => {
       </AppShell.Header>
       <AppShell.Navbar p="md">
         <AppShell.Section grow component={ScrollArea}>
-          {notes &&
+          {notes ? (
             notes.map((note) => (
               <NavNote
+                disabled={isEditing}
                 onDelete={() => {
                   modalOpen();
                   setSelectedId(note.id);
@@ -103,7 +113,10 @@ const Notes = () => {
                 key={note.id}
                 note={note}
               />
-            ))}
+            ))
+          ) : (
+            <Text c="dimmed">Записей ещё нет</Text>
+          )}
         </AppShell.Section>
         <AppShell.Section
           p="md"
@@ -111,15 +124,21 @@ const Notes = () => {
         >
           <Center>
             <Form action="/notes" method="post">
-              <Button color="gray" variant="filled" size="md" type="submit">
+              <Button
+                disabled={isEditing}
+                color="blue"
+                variant="filled"
+                size="md"
+                type="submit"
+              >
                 Добавить новую запись
               </Button>
             </Form>
           </Center>
         </AppShell.Section>
       </AppShell.Navbar>
-      <AppShell.Main>
-        <Outlet />
+      <AppShell.Main component={ScrollArea}>
+        <Outlet context={{ isEditing, setIsEditing }} />
       </AppShell.Main>
     </AppShell>
   );
