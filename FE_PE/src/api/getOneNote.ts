@@ -3,10 +3,11 @@ import type { Note, RespondBackend } from "../types";
 import { notifications } from "@mantine/notifications";
 import { ROUTES_BACKEND } from "../routesBackend";
 
-export async function getNotes(): Promise<Note[] | null> {
+export async function getOneNote(id?: string): Promise<Note | null> {
   try {
-    const res = await axios.get<RespondBackend<Note[]>>(ROUTES_BACKEND.notes);
-    if (res.data.success) {
+    if (!id) return null;
+    const res = await axios.get<RespondBackend<Note>>(ROUTES_BACKEND.note(id));
+    if (res.data.success && res.data?.data) {
       return res.data.data;
     }
     return null;

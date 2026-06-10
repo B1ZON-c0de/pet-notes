@@ -1,31 +1,48 @@
 import axios from "axios";
-import { Link, Outlet, useLoaderData, useNavigate } from "react-router";
+import {
+  Link,
+  Outlet,
+  useLoaderData,
+  useNavigate,
+  useSearchParams,
+} from "react-router";
 import { ROUTES_BACKEND } from "../../routesBackend";
 import { ROUTES, ROUTES_DYNAMICS } from "../../routes";
 import { AppShell, Button, Flex, TextInput } from "@mantine/core";
+import { useDebouncedValue } from "@mantine/hooks";
 import { useEffect, useState } from "react";
-import type { Note } from "../../types";
+import type { Note, User } from "../../types";
+
+interface LoaderProps {
+  user: User;
+  notes: Note[];
+}
 
 const Notes = () => {
-  const [notes, setNotes] = useState<Note[] | null>(null);
-  const [search, setSearch] = useState("");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchQuery, setSearchQuery] = useState(
+    searchParams.get("search") || "",
+  );
+  const [debouncedValue] = useDebouncedValue(searchQuery, 200);
+
   useEffect(() => {
-    const loadData = async () => {
-      const res = await axios.get(ROUTES_BACKEND.notes, {
-        params: {
-          search: search ? search : undefined,
-        },
-      });
-      setNotes(res.data.data);
-    };
-    loadData();
-  }, [search]);
+    const params = new URLSearchParams(searchParams);
+    if (debouncedValue) {
+      params.set("search", debouncedValue);
+    } else {
+      params.delete("search");
+    }
+    setSearchParams(params);
+  }, [debouncedValue]);
+
   const navigate = useNavigate();
-  const { user } = useLoaderData();
+  const { user, notes } = useLoaderData<LoaderProps>();
+
   const logoutFn = async () => {
     await axios.post(ROUTES_BACKEND.logout);
     navigate(ROUTES.login, { replace: true });
   };
+
   return (
     <AppShell
       padding="md"
@@ -35,8 +52,8 @@ const Notes = () => {
       <AppShell.Header p="md">
         <Flex justify="flex-end" gap="md">
           <TextInput
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
           />
           <p>{user.name}</p>
           <Button variant="filled" onClick={logoutFn} size="md">
