@@ -54,7 +54,7 @@ export const routes = createBrowserRouter([
       const search = url.searchParams.get("search");
       const notes = await getNotes(search);
       const user = context.get(userContext);
-      return { user, notes };
+      return { user, notes: notes ? notes : null };
     },
     lazy: async () => {
       const { default: Component } = await import("./pages/app/Notes.tsx");
