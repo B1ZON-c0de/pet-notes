@@ -14,6 +14,8 @@ import {
   Button,
   Center,
   Flex,
+  Grid,
+  GridCol,
   Modal,
   ScrollArea,
   Text,
@@ -74,31 +76,39 @@ const Notes = () => {
         <DeleteModal closeModal={modalClose} id={selectedId || ""} />
       </Modal>
       <AppShell.Header p="md">
-        <Flex align="center" gap="md">
-          <Burger
-            opened={burgerOpened}
-            onClick={burgerToggle}
-            hiddenFrom="sm"
-            size="md"
-          />
-          <Flex ml="auto" gap="md" align="center">
+        <Grid gap="md" align="center">
+          <GridCol span={4}>
+            <Burger
+              opened={burgerOpened}
+              onClick={burgerToggle}
+              hiddenFrom="sm"
+              size="md"
+            />
+          </GridCol>
+          <GridCol span={4}>
             <TextInput
+              size="md"
+              placeholder="Поиск по записям..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               disabled={isEditing}
             />
-            <p>{user.name}</p>
-            <Button
-              disabled={isEditing}
-              color="red"
-              variant="filled"
-              onClick={logoutFn}
-              size="md"
-            >
-              Выйти
-            </Button>
-          </Flex>
-        </Flex>
+          </GridCol>
+          <GridCol span={4}>
+            <Flex ml="auto" gap="md" justify="flex-end" align="center">
+              <p>{user.name}</p>
+              <Button
+                disabled={isEditing}
+                color="red"
+                variant="filled"
+                onClick={logoutFn}
+                size="md"
+              >
+                Выйти
+              </Button>
+            </Flex>
+          </GridCol>
+        </Grid>
       </AppShell.Header>
       <AppShell.Navbar p="md">
         <AppShell.Section grow component={ScrollArea}>
