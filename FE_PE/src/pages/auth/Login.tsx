@@ -1,9 +1,10 @@
 import axios from "axios";
 import { ROUTES } from "../../routes";
-import { BaseAuth, type FormValues } from "../../components/BaseAuth";
+import { BaseAuth } from "../../components/BaseAuth";
 import { ROUTES_BACKEND } from "../../routesBackend";
 import type { RespondBackend } from "../../types";
 import { useNavigate } from "react-router";
+import type { FormValues } from "../../hooks/useAuth";
 
 const descNav = {
   textNav: "Ёще нет аккаунта?",

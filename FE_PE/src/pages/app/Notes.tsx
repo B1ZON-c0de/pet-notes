@@ -96,7 +96,7 @@ const Notes = () => {
           </GridCol>
           <GridCol span={4}>
             <Flex ml="auto" gap="md" justify="flex-end" align="center">
-              <p>{user.name}</p>
+              <Text>{user.name}</Text>
               <Button
                 disabled={isEditing}
                 color="red"

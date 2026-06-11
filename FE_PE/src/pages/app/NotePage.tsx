@@ -13,20 +13,33 @@ import {
   thematicBreakPlugin,
   type MDXEditorMethods,
 } from "@mdxeditor/editor";
+import { ROUTES } from "../../routes";
+
 interface LoaderProps {
   note: Note;
 }
+
 interface OutletProps {
   isEditing: boolean;
   setIsEditing: (v: boolean) => void;
 }
+
 const MAX_TITLE_LENGTH = 100;
+
+const mdxEditorPlugins = [
+  headingsPlugin(),
+  listsPlugin(),
+  quotePlugin(),
+  thematicBreakPlugin(),
+  markdownShortcutPlugin(),
+];
 
 const NotePage = () => {
   const { note } = useLoaderData<LoaderProps>();
   const refText = useRef<MDXEditorMethods>(null);
   const refTitle = useRef<MDXEditorMethods>(null);
   const { isEditing, setIsEditing } = useOutletContext<OutletProps>();
+
   return (
     <>
       <Text ta="center" c="dimmed">
@@ -37,13 +50,7 @@ const NotePage = () => {
           ref={refTitle}
           markdown={note.title}
           placeholder="Заголовок"
-          plugins={[
-            headingsPlugin(),
-            listsPlugin(),
-            quotePlugin(),
-            thematicBreakPlugin(),
-            markdownShortcutPlugin(),
-          ]}
+          plugins={mdxEditorPlugins}
         />
       ) : (
         <Markdown>{note.title}</Markdown>
@@ -53,13 +60,7 @@ const NotePage = () => {
           ref={refText}
           markdown={note.text}
           placeholder="Начните писать текст..."
-          plugins={[
-            headingsPlugin(),
-            listsPlugin(),
-            quotePlugin(),
-            thematicBreakPlugin(),
-            markdownShortcutPlugin(),
-          ]}
+          plugins={mdxEditorPlugins}
         />
       ) : (
         <Markdown>{note.text}</Markdown>
@@ -91,7 +92,7 @@ const NotePage = () => {
 
               setIsEditing(false);
             }}
-            action={"/notes/" + note.id}
+            action={ROUTES.notes + "/" + note.id}
             method="patch"
           >
             <input type="hidden" name="text" />
